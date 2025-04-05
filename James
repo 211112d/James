@@ -1,0 +1,401 @@
+local nigga = {};
+--
+nigga.varis = {
+    camera      = workspace.CurrentCamera;
+    runservice  = game:GetService("RunService");
+    userinput   = game:GetService("UserInputService");
+    localchar   = workspace.Ignore.LocalCharacter
+}
+--
+
+--
+nigga.hitbox = {
+    enabled     = false;
+    width       = 6;
+    height      = 6;
+    tpe         = "Head";
+    teamcheck   = false;
+    aicheck     = false;
+}
+--
+
+--
+nigga.esp = {
+    enabled         = false;
+    box             = false;
+    name            = false;
+    weapon          = false;
+    healtbar        = false;
+    sleep           = false;
+    maxdist         = 1500;
+    boxtype         = "corner";
+    fonts       = {};
+}
+--
+
+
+    local ESP = function(plr)
+        -- Dupe Check
+        --coroutine.wrap(DupeCheck)(plr)
+        --
+        local MainFrame         = CreateClass("Frame", {Parent = ESPHolder; Name = "Player"})
+        local MainFrameOutline  = CreateClass("UIStroke", {Parent = MainFrame; Name = "MainFrameStroke"})
+        local OutlineFrame      = CreateClass("Frame", {Parent = MainFrame; Name = "Player"; Size = UDim2.new(1, 0, 1, 0); BackgroundTransparency = 1})
+        local MainFrameOutline2 = CreateClass("UIStroke", {Parent = OutlineFrame; Name = "MainFrameStroke"})
+        local NameLabel         = CreateClass("TextLabel", {Parent = ESPHolder; Name = "Name"; BackgroundTransparency = 1; Size = UDim2.new(0, 100, 0, 20); FontFace = nigga.esp.fonts.smallestpixel7; AnchorPoint = Vector2.new(0.5, 0.5); Position = UDim2.new(0.5, 0, 0, -11); TextSize = 11; TextColor3 = Color3.fromRGB(255, 255, 255); TextStrokeTransparency = 0; TextStrokeColor3 = Color3.new(0, 0, 0), RichText = true})
+        local WeaponLabel       = CreateClass("TextLabel", {Parent = ESPHolder; Name = "Weapon"; BackgroundTransparency = 1; Size = UDim2.new(0, 100, 0, 20); FontFace = nigga.esp.fonts.smallestpixel7; AnchorPoint = Vector2.new(0.5, 0.5); Position = UDim2.new(0.5, 0, 1, 0); TextSize = 11; TextColor3 = Color3.fromRGB(255, 255, 255); TextStrokeTransparency = 0; TextStrokeColor3 = Color3.new(0, 0, 0), RichText = true})
+        --
+        local LeftTop 			= CreateClass("Frame", {Name = "LeftTop"; ZIndex = 1; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local LeftSide 			= CreateClass("Frame", {Name = "LeftSide"; ZIndex = 0; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local RightTop 			= CreateClass("Frame", {Name = "RightTop"; ZIndex = 1; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local RightSide 		= CreateClass("Frame", {Name = "RightSide"; ZIndex = 0; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local BottomSide 		= CreateClass("Frame", {Name = "BottomSide"; ZIndex = 1; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local BottomDown 		= CreateClass("Frame", {Name = "BottomDown"; ZIndex = 0; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local BottomRightSide 	= CreateClass("Frame", {Name = "BottomRightSide"; ZIndex = 1; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        local BottomRightDown 	= CreateClass("Frame", {Name = "BottomRightDown"; ZIndex = 0; Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), Position = UDim2.new(0, 0, 0, 0)})
+        --
+        CreateClass("Frame", {Parent = BottomRightDown; Size = UDim2.new(1, 0, 1, 0); BackgroundColor3 = Color3.fromRGB(255, 255, 255); BorderSizePixel = 0})
+        CreateClass("Frame", {Parent = RightSide; Size = UDim2.new(1, 0, 1, 0); BackgroundColor3 = Color3.fromRGB(255, 255, 255); BorderSizePixel = 0})
+        CreateClass("Frame", {Parent = LeftSide; Size = UDim2.new(1, 0, 1, 0); BackgroundColor3 = Color3.fromRGB(255, 255, 255); BorderSizePixel = 0})
+        CreateClass("Frame", {Parent = BottomDown; Size = UDim2.new(1, 0, 1, 0); BackgroundColor3 = Color3.fromRGB(255, 255, 255); BorderSizePixel = 0})
+        --
+        local Healthbar 		= CreateClass("Frame", {Parent = ESPHolder, BackgroundColor3 = Color3.fromRGB(255, 255, 255), BackgroundTransparency = 0})
+        local BehindHealthbar 	= CreateClass("Frame", {Parent = ESPHolder, ZIndex = -1, BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 0})
+        CreateClass("UIGradient", {Parent = Healthbar, Enabled = true, Rotation = -90, Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 140, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))}})
+        --
+        local HideESP = function()
+            MainFrame.Visible = false
+            NameLabel.Visible = false
+            WeaponLabel.Visible = false
+            --
+            Healthbar.Visible = false
+            BehindHealthbar.Visible = false
+            --
+            LeftTop.Visible = false
+            LeftSide.Visible = false
+            RightTop.Visible = false
+            RightSide.Visible = false
+            BottomSide.Visible = false
+            BottomDown.Visible = false
+            BottomRightSide.Visible = false
+            BottomRightDown.Visible = false
+        end
+
+        local GetToolName = function(InputModel)
+            local HandModel = InputModel
+            if HandModel and HandModel:GetAttribute("name") then
+                return tostring(HandModel:GetAttribute("name"))
+            end
+            return nil
+        end
+
+        local Connection;
+        Connection = nigga.varis.runservice.Heartbeat:Connect(function()
+            if plr and plr:FindFirstChild("HumanoidRootPart") then
+                local Pos, OnScreen = nigga.varis.camera:WorldToScreenPoint(plr.HumanoidRootPart.Position)
+                local scaleFactor = 15 / (Pos.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
+                local Dist = DistanceCheck(plr.HumanoidRootPart)
+                local w, h = 2.4 * scaleFactor, 3.79  * scaleFactor
+                local h2 = 3.9  * scaleFactor
+                local IsCorner = nigga.esp.boxtype == "corner"
+                --
+                if OnScreen and nigga.esp.enabled and plr.Head.Nametag.tag.Text ~= "Shylou2644" then
+                    --
+                    if nigga.esp.sleep then
+                        if nigga:sleepcheck(plr) then
+                            HideESP();
+                            return
+                        end
+                    end
+                    --Checks
+                    if nigga.esp.box then
+                        if nigga.esp.boxtype == "corner" then -- not my corner math
+                            LeftTop.Visible = IsCorner
+                            LeftTop.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y - h / 2.5)
+                            LeftTop.Size = UDim2.new(0, w / 5, 0, 1)
+                            LeftTop.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            LeftSide.Visible = IsCorner
+                            LeftSide.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y - h / 2.5)
+                            LeftSide.Size = UDim2.new(0, 1, 0, h / 5)
+                            LeftSide.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            BottomSide.Visible = IsCorner
+                            BottomSide.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y + h / 1.6) -- Bottom
+                            BottomSide.Size = UDim2.new(0, 1, 0, h / 5)
+                            BottomSide.AnchorPoint = Vector2.new(0, 5)
+                            BottomSide.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            BottomDown.Visible = IsCorner
+                            BottomDown.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y + h / 1.6) -- Bottom
+                            BottomDown.Size = UDim2.new(0, w / 5, 0, 1)
+                            BottomDown.AnchorPoint = Vector2.new(0, 1)
+                            BottomDown.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            RightTop.Visible = IsCorner
+                            RightTop.Position = UDim2.new(0, Pos.X + w / 2, 0, Pos.Y - h / 2.5)
+                            RightTop.Size = UDim2.new(0, w / 5, 0, 1)
+                            RightTop.AnchorPoint = Vector2.new(1, 0)
+                            RightTop.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            RightSide.Visible = IsCorner
+                            RightSide.Position = UDim2.new(0, Pos.X + w / 2 - 1, 0, Pos.Y - h / 2.5)
+                            RightSide.Size = UDim2.new(0, 1, 0, h / 5)
+                            RightSide.AnchorPoint = Vector2.new(0, 0)
+                            RightSide.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            BottomRightSide.Visible = IsCorner
+                            BottomRightSide.Position = UDim2.new(0, Pos.X + w / 2, 0, Pos.Y + h / 1.6) -- Bottom
+                            BottomRightSide.Size = UDim2.new(0, 1, 0, h / 5)
+                            BottomRightSide.AnchorPoint = Vector2.new(1, 1)
+                            BottomRightSide.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    
+                            BottomRightDown.Visible = IsCorner
+                            BottomRightDown.Position = UDim2.new(0, Pos.X + w / 2, 0, Pos.Y + h / 1.6) -- Bottom
+                            BottomRightDown.Size = UDim2.new(0, w / 5, 0, 1)
+                            BottomRightDown.AnchorPoint = Vector2.new(1, 1)
+                            BottomRightDown.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                        elseif nigga.esp.boxtype == "box" then
+                            MainFrame.Position = UDim2.new(0, Pos.X - 3 * scaleFactor / 2, 0, Pos.Y - 4.5 * scaleFactor / 2.25)
+                            MainFrame.Size = UDim2.new(0, 3 * scaleFactor, 0, 4.5 * scaleFactor)
+                            MainFrame.Visible = not IsCorner
+                            MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                            MainFrame.BackgroundTransparency = 1
+                            MainFrame.BorderSizePixel = 1
+                            --
+                            MainFrameOutline.Color = Color3.fromRGB(0, 0, 0)
+                            MainFrameOutline.LineJoinMode = Enum.LineJoinMode.Miter
+                            MainFrameOutline.Thickness = 2.25
+                            MainFrameOutline2.Color = Color3.fromRGB(255, 255, 255)
+                            MainFrameOutline2.LineJoinMode = Enum.LineJoinMode.Miter
+                        end
+                    else
+                        MainFrame.Visible = false
+                        LeftTop.Visible = false; LeftSide.Visible = false; RightTop.Visible = false
+                        RightSide.Visible = false; BottomSide.Visible = false; BottomDown.Visible = false
+                        BottomRightSide.Visible = false
+                        BottomRightDown.Visible = false
+                    end
+                    if nigga.esp.healthbar then
+                        local health = 100 / 100;
+                        health = math.clamp(health, 0, 100)
+                        Healthbar.Visible = true;
+                        Healthbar.Position = UDim2.new(0, LeftTop.Position.X.Offset - 8, 0, Pos.Y - h / 2.5 + h * (1 - health))
+                        Healthbar.Size = UDim2.new(0, 4, 0, h2 * health)  
+                        Healthbar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                        --
+                        BehindHealthbar.Visible = true;
+                        BehindHealthbar.Position = UDim2.new(0, LeftTop.Position.X.Offset - 8, 0, Pos.Y - h / 2.5)  
+                        BehindHealthbar.Size = UDim2.new(0, 4, 0, h2)
+                        BehindHealthbar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                    else
+                        Healthbar.Visible = false
+                        BehindHealthbar.Visible = false
+                    end
+                    if nigga.esp.name then
+                        if plr.Head.Nametag.tag.Text ~= "" and plr.Head.Nametag.tag.Text ~= nil then
+                            if plr.Head.Nametag.tag.Text ~= "Shylou2644" then
+                                NameLabel.Text = plr.Head.Nametag.tag.Text.." ["..math.floor(Dist).."]"
+                            end
+                        else
+                            NameLabel.Text = "Player ["..math.floor(Dist).."]"
+                        end
+
+                        NameLabel.Visible = true
+                        NameLabel.Position = UDim2.new(0, Pos.X, 0, Pos.Y - 3 * scaleFactor / 2 - 7)
+                    else
+                        NameLabel.Visible = false
+                    end
+                    --
+                    if nigga.esp.weapon then
+                        if plr:FindFirstChild("HandModel") and GetToolName(plr:FindFirstChild("HandModel")) ~= nil then
+                            WeaponLabel.Text = tostring(GetToolName(plr:FindFirstChild("HandModel")))
+                        else
+                            WeaponLabel.Text = "None"
+                        end
+
+                        WeaponLabel.Position = UDim2.new(0, Pos.X, 0, Pos.Y + h / 1.62 + 7)
+                        WeaponLabel.Visible = true
+                    else
+                        WeaponLabel.Visible = false
+                    end
+                else
+                    HideESP();
+                end 
+            else
+                HideESP();
+            end
+
+            if not plr or not plr.Parent then
+                MainFrame:Destroy()
+                NameLabel:Destroy()
+                WeaponLabel:Destroy()
+                --
+                Healthbar:Destroy()
+                BehindHealthbar:Destroy()
+                --
+                LeftTop:Destroy()
+                LeftSide:Destroy()
+                RightTop:Destroy()
+                RightSide:Destroy()
+                BottomSide:Destroy()
+                BottomDown:Destroy()
+                BottomRightSide:Destroy()
+                BottomRightDown:Destroy()
+                Connection:Disconnect()
+            end
+        end)
+    end
+
+    for _,v in pairs(game:GetService("Workspace"):GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") then
+            coroutine.wrap(ESP)(v)
+        end
+    end
+    
+    game:GetService("Workspace").ChildAdded:Connect(function(v)
+        task.delay(1.5, function()
+            if v:FindFirstChild("HumanoidRootPart") then
+                coroutine.wrap(ESP)(v)
+            end
+        end)
+    end)
+end
+--
+do -- hitbox stuff
+    function nigga:UpdateHitbox()
+        for _, v in pairs(workspace:GetChildren()) do
+            if (nigga.hitbox.enabled and v:FindFirstChild("Head") and v:FindFirstChild("Torso") and not nigga:sleepcheck(v) and not nigga:AICheck(v, "hitbox") and not nigga:TeamCheck(v, "hitbox")) then
+                if nigga.hitbox.tpe == "Head" then
+                    v.Torso.Size = Vector3.new(0.6530659198760986, 2.220424175262451, 1.4367451667785645); v.Torso.Transparency = 0; v.Torso.CanCollide = true;
+                    v.Head.Size = Vector3.new(nigga.hitbox.width, nigga.hitbox.height, nigga.hitbox.width);
+                    v.Head.Transparency, v.Head.CanCollide = 0.3, false; 
+                else
+                    v.Head.Size = Vector3.new(1.672248125076294, 0.835624098777771, 0.835624098777771); v.Head.Transparency = 0; v.Head.CanCollide = true;
+                    v.Torso.Size = Vector3.new(nigga.hitbox.width, nigga.hitbox.height, nigga.hitbox.width);
+                    v.Torso.Transparency, v.Torso.CanCollide = 0.3, false;
+                end
+            elseif (v:FindFirstChild("Head") and v:FindFirstChild("Torso")) then
+                v.Head.Size, v.Torso.Size = Vector3.new(1.672248125076294, 0.835624098777771, 0.835624098777771), Vector3.new(0.6530659198760986, 2.220424175262451, 1.4367451667785645);
+                v.Head.Transparency, v.Torso.Transparency = 0, 0;
+                v.Head.CanCollide, v.Torso.CanCollide = true, true;
+            end
+        end
+    end
+    
+    workspace.ChildAdded:Connect(function(v)
+        if v:FindFirstChild("Head") then
+            nigga:UpdateHitbox();
+        end
+    end)
+end
+
+do -- menu
+    local UserInterface = loadstring(game:HttpGet("https://wow-bams.vercel.app/UIRewrite.lua",true))()
+    local Interface = UserInterface:Create{title = 'Nigga<font color="rgb(255, 2, 2)">hub</font>'};
+    local Tabs={Combat=Interface:Tab("combat");Visuals=Interface:Tab("visuals");Local=Interface:Tab("local");Settings=Interface:Tab("settings")};
+    do -- combat
+    
+        local hitbox = Tabs.Combat:Section("hitbox", "right");
+        do
+            hitbox:Toggle({ title = "enabled", default = false, callback = function(bool)
+                nigga.hitbox.enabled = bool
+                nigga:UpdateHitbox()
+            end})
+            
+            hitbox:Slider({ title = "width", suffix = "", min = 1, max = 8, default = 6, float = 0.1, callback = function(value)
+                nigga.hitbox.width = value
+                nigga:UpdateHitbox()
+            end})
+
+            hitbox:Slider({ title = "height", suffix = "", min = 1, max = 8, default = 6, float = 0.1, callback = function(value)
+                nigga.hitbox.height = value
+                nigga:UpdateHitbox()
+            end})
+
+            hitbox:Dropdown({ title = "type", values = {"Head", "Torso"}, default = "Head", multi = false, callback = function (value)
+                nigga.hitbox.tpe = value
+                nigga:UpdateHitbox()
+            end})
+
+            hitbox:Toggle({ title = "ai check", default = false, callback = function(bool)
+                nigga.hitbox.aicheck = bool
+                nigga:UpdateHitbox()
+            end})
+
+            hitbox:Toggle({ title = "team check", default = false, callback = function(bool)
+                nigga.hitbox.teamcheck = bool
+                nigga:UpdateHitbox()
+            end})
+            --
+            local exploit = Tabs.Combat:Section("exploits", "left");
+            do
+                exploit:Toggle({ title = "enabled", default = false, callback = function(bool)
+                    nigga.exploits.enabled = bool
+                end})
+
+
+            
+            exploit:Toggle({ title = "long-neck", default = false, callback = function(bool)
+                nigga.exploits.longneck = bool
+                end}):Keybind({ title = "long neck", keybindlist = true, mode = "Toggle", keybindname = "long neck", callback = function(key)
+                    if nigga.exploits.longneck and key then
+                        nigga.varis.localchar.Bottom.PrismaticConstraint.UpperLimit = 6
+                        nigga.varis.localchar.Bottom.PrismaticConstraint.LowerLimit = 6
+                    else
+                        nigga.varis.localchar.Bottom.PrismaticConstraint.UpperLimit = 3
+                        nigga.varis.localchar.Bottom.PrismaticConstraint.LowerLimit = 1.65
+                    end
+                end})
+            end
+        end
+    end
+    --
+    do -- visuals
+        local players = Tabs.Visuals:Section("player", "left");
+        do
+            players:Toggle({ title = "enabled", default = false, callback = function(bool)
+                nigga.esp.enabled = bool
+            end})
+
+            players:Toggle({ title = "boxes", default = false, callback = function(bool)
+                nigga.esp.box = bool
+            end})
+
+            players:Toggle({ title = "name", default = false, callback = function(bool)
+                Nigga.esp.name = bool
+            end})
+
+            players:Toggle({ title = "weapon", default = false, callback = function(bool)
+                nigga.esp.weapon = bool
+            end})
+
+            players:Toggle({ title = "healthbar", default = false, callback = function(bool)
+                nigga.esp.healthbar = bool
+            end})
+        end
+    end
+end
+
+game:GetService("RunService").Heartbeat:Connect(function(Delta)
+    if nigga.aim.enabled and nigga.target ~= nil and nigga.target:FindFirstChild("Head") then
+        LastVelocity, CurrentPos = nigga:CalculateVelocity(nigga.target["Head"], CurrentPos, LastVelocity, Delta)
+        local Position, OnScreen = nigga.varis.camera:WorldToViewportPoint(nigga:GetPrediction(LastVelocity))
+        if OnScreen then
+            local MouseLocation = nigga.varis.userinput:GetMouseLocation()
+            local XOffset, YOffset = nigga.aim.smooth, nigga.aim.smooth
+            local MouseSens = UserSettings().GameSettings.MouseSensitivity
+            local Scale = 1.5 / MouseSens
+            if nigga.aim.autocalc then
+                XOffset, YOffset = 0.1 * Scale, 0.1 * Scale
+            end
+            mousemoverel((Position.X - MouseLocation.X) * XOffset, (Position.Y - MouseLocation.Y) * YOffset)
+        end
+    else
+        LastVelocity = Vector3.new(0, 0, 0)
+    end
+    --
+    local size = nigga.aim.realfov / math.tan(math.rad(nigga.varis.camera.FieldOfView / 2))
+    nigga.aim.fov = size
+    fovcircle.Radius = nigga.aim.dynamic and nigga.aim.fov or nigga.aim.realfov
+end)
