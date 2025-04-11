@@ -906,7 +906,7 @@ frag.hitbox = {
     enabled     = false;
     width       = 6;
     height      = 6;
-    tpe         = "Head";
+    tpe         = "Torso";
     teamcheck   = false;
     aicheck     = false;
 }
@@ -1342,8 +1342,8 @@ end
 do -- hitbox stuff
     function frag:UpdateHitbox()
         for _, v in pairs(workspace:GetChildren()) do
-            if (frag.hitbox.enabled and v:FindFirstChild("Head") and v:FindFirstChild("Torso") and not frag:sleepcheck(v) and not frag:AICheck(v, "hitbox") and not frag:TeamCheck(v, "hitbox")) then
-                if frag.hitbox.tpe == "Head" then
+            if (frag.hitbox.enabled and v:FindFirstChild("Torso") and v:FindFirstChild("Torso") and not frag:sleepcheck(v) and not frag:AICheck(v, "hitbox") and not frag:TeamCheck(v, "hitbox")) then
+                if frag.hitbox.tpe == "Torso" then
                     v.Torso.Size = Vector3.new(0.6530659198760986, 2.220424175262451, 1.4367451667785645); v.Torso.Transparency = 0; v.Torso.CanCollide = true;
                     v.Head.Size = Vector3.new(frag.hitbox.width, frag.hitbox.height, frag.hitbox.width);
                     v.Head.Transparency, v.Head.CanCollide = 0.3, false;
