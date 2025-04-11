@@ -989,7 +989,7 @@ do -- player func
     function frag:TeamCheck(Player, type)
         if (frag.aim.teamcheck and type == "aim" and Player:FindFirstChild("Head") and Player.Head.Dot.Enabled) then
             return true;
-        elseif (frag.hitbox.teamcheck and type == "hitbox" and Player:FindFirstChild("Head") and Player.Head.Dot.Enabled) then
+        elseif (frag.hitbox.teamcheck and type == "hitbox" and Player:FindFirstChild("Torso") and Player.Head.Dot.Enabled) then
             return true
         end
         return false;
