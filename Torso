@@ -421,7 +421,7 @@ end)
 local HitboxLog = false
 local updatehitbox = function()
     for i,v in pairs(workspace:GetChildren()) do
-        if v:FindFirstChild("Torso") and v:FindFirstChild("Torso") then
+        if v:FindFirstChild("Head") and v:FindFirstChild("Torso") then
             if framework.combat.hitbox.enabled then
                 HitboxLog = true
                 v.Head.Size = Vector3.new(framework.combat.hitbox.width, framework.combat.hitbox.height, framework.combat.hitbox.width)
@@ -906,8 +906,8 @@ frag.hitbox = {
     enabled     = false;
     width       = 6;
     height      = 6;
-    tpe         = "Torso";
-    teamcheck   = true;
+    tpe         = "Head";
+    teamcheck   = false;
     aicheck     = false;
 }
 --
@@ -978,18 +978,18 @@ do -- player func
     end;
     --
     function frag:AICheck(Player, type)
-        if (frag.aim.aicheck and type == "aim" and Player:FindFirstChild("Torso") and Player.Head.CollisionGroup == "NPC") then
+        if (frag.aim.aicheck and type == "aim" and Player:FindFirstChild("Head") and Player.Head.CollisionGroup == "NPC") then
             return true;
-        elseif (frag.hitbox.aicheck and type == "hitbox" and Player:FindFirstChild("Torso") and Player.Head.CollisionGroup == "NPC") then
+        elseif (frag.hitbox.aicheck and type == "hitbox" and Player:FindFirstChild("Head") and Player.Head.CollisionGroup == "NPC") then
             return true;
         end;
         return false;
     end;
     --
     function frag:TeamCheck(Player, type)
-        if (frag.aim.teamcheck and type == "aim" and Player:FindFirstChild("Torso") and Player.Torso.Dot.Enabled) then
+        if (frag.aim.teamcheck and type == "aim" and Player:FindFirstChild("Head") and Player.Head.Dot.Enabled) then
             return true;
-        elseif (frag.hitbox.teamcheck and type == "hitbox" and Player:FindFirstChild("Torso") and Player.Torso.Dot.Enabled) then
+        elseif (frag.hitbox.teamcheck and type == "hitbox" and Player:FindFirstChild("Head") and Player.Head.Dot.Enabled) then
             return true
         end
         return false;
@@ -1000,7 +1000,7 @@ do -- player func
         local closestMagnitude = math.huge;
         local middle = frag.varis.camera.ViewportSize / 2;
         for _,v in pairs(workspace:GetChildren()) do
-            if (v:FindFirstChild("Torso") and not frag:sleepcheck(v) and not frag:AICheck(v, "aim") and not frag:TeamCheck(v, "aim")) then
+            if (v:FindFirstChild("HumanoidRootPart") and not frag:sleepcheck(v) and not frag:AICheck(v, "aim") and not frag:TeamCheck(v, "aim")) then
                 local PartPos, OnScreen = frag.varis.camera.WorldToViewportPoint(frag.varis.camera, v:GetPivot().Position);
                 local Magnitude = (Vector2.new(PartPos.X, PartPos.Y) - middle).magnitude;
                 if (Magnitude < fovcircle.Radius and Magnitude < closestMagnitude and OnScreen) then
@@ -1325,14 +1325,14 @@ do -- esp
     end
 
     for _,v in pairs(game:GetService("Workspace"):GetChildren()) do
-        if v:FindFirstChild("Torso") then
+        if v:FindFirstChild("HumanoidRootPart") then
             coroutine.wrap(ESP)(v)
         end
     end
     
     game:GetService("Workspace").ChildAdded:Connect(function(v)
         task.delay(1.5, function()
-            if v:FindFirstChild("Torso") then
+            if v:FindFirstChild("HumanoidRootPart") then
                 coroutine.wrap(ESP)(v)
             end
         end)
@@ -1342,8 +1342,8 @@ end
 do -- hitbox stuff
     function frag:UpdateHitbox()
         for _, v in pairs(workspace:GetChildren()) do
-            if (frag.hitbox.enabled and v:FindFirstChild("Torso") and v:FindFirstChild("Torso") and not frag:sleepcheck(v) and not frag:AICheck(v, "hitbox") and not frag:TeamCheck(v, "hitbox")) then
-                if frag.hitbox.tpe == "Torso" then
+            if (frag.hitbox.enabled and v:FindFirstChild("Head") and v:FindFirstChild("Torso") and not frag:sleepcheck(v) and not frag:AICheck(v, "hitbox") and not frag:TeamCheck(v, "hitbox")) then
+                if frag.hitbox.tpe == "Head" then
                     v.Torso.Size = Vector3.new(0.6530659198760986, 2.220424175262451, 1.4367451667785645); v.Torso.Transparency = 0; v.Torso.CanCollide = true;
                     v.Head.Size = Vector3.new(frag.hitbox.width, frag.hitbox.height, frag.hitbox.width);
                     v.Head.Transparency, v.Head.CanCollide = 0.3, false;
@@ -1352,7 +1352,7 @@ do -- hitbox stuff
                     v.Torso.Size = Vector3.new(frag.hitbox.width, frag.hitbox.height, frag.hitbox.width);
                     v.Torso.Transparency, v.Torso.CanCollide = 0.3, false;
                 end
-            elseif (v:FindFirstChild("Torso") and v:FindFirstChild("Torso")) then
+            elseif (v:FindFirstChild("Head") and v:FindFirstChild("Torso")) then
                 v.Head.Size, v.Torso.Size = Vector3.new(1.672248125076294, 0.835624098777771, 0.835624098777771), Vector3.new(0.6530659198760986, 2.220424175262451, 1.4367451667785645);
                 v.Head.Transparency, v.Torso.Transparency = 0, 0;
                 v.Head.CanCollide, v.Torso.CanCollide = true, true;
@@ -1361,7 +1361,7 @@ do -- hitbox stuff
     end
     
     workspace.ChildAdded:Connect(function(v)
-        if v:FindFirstChild("torso") then
+        if v:FindFirstChild("Head") then
             frag:UpdateHitbox();
         end
     end)
@@ -1426,7 +1426,7 @@ do -- menu
                 frag:UpdateHitbox()
             end})
 
-            hitbox:Dropdown({ title = "type", values = {"Torso", "Torso"}, default = "Torso", multi = false, callback = function (value)
+            hitbox:Dropdown({ title = "type", values = {"Torso", "Head"}, default = "Torso", multi = false, callback = function (value)
                 frag.hitbox.tpe = value
                 frag:UpdateHitbox()
             end})
